@@ -1,0 +1,26 @@
+{
+    "name": "alex-yashin/pina-oauth-client",
+    "keywords": ["php"],
+    "license": "MIT",
+    "homepage": "https://github.com/alex-yashin/pina-oauth-client/",
+    "support": {
+        "issues": "https://github.com/alex-yashin/pina-oauth-client/issues",
+        "source": "https://github.com/alex-yashin/pina-oauth-client/"
+    },
+    "authors": [
+        {
+            "name": "Alex Yashin",
+            "email": "alex-yashin@ya.ru"
+        }
+    ],
+    "require": {
+        "php": ">=7.2",
+        "pinahq/framework": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "PinaOAuthClient\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
