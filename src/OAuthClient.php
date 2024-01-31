@@ -2,7 +2,6 @@
 
 namespace PinaOAuthClient;
 
-use Pina\Access;
 use Pina\App;
 use Pina\Config;
 
@@ -15,15 +14,8 @@ class OAuthClient
         $this->resource = $resource;
     }
 
-    public function register()
-    {
-        App::router()->register($this->resource, OAuthClientEndpoint::class);
-        Access::permit($this->resource, 'public');
-    }
-
     public function makeAuthorizeUrl($redirectUri = null)
     {
-
         $state = new RedirectState();
         $stateId = $state->set($redirectUri ?? $_SERVER['REQUEST_URI']);
 

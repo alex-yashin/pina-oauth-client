@@ -2,7 +2,6 @@
 
 namespace PinaOAuthClient;
 
-use Pina\App;
 use Pina\Http\Endpoint;
 use Pina\Response;
 
@@ -47,8 +46,16 @@ abstract class OAuthClientEndpoint extends Endpoint
 
         $this->loginAs($profile);
 
-        return Response::found(App::link($redirectUri));
+        if ($this->isSecureUri($redirectUri)) {
+            return Response::found($redirectUri);
+        }
+
+        return Response::found('/');
     }
 
+    protected function isSecureUri($redirectUri): bool
+    {
+        return true;
+    }
 
 }
