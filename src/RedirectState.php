@@ -14,20 +14,39 @@ class RedirectState
         }
 
         $stateData = json_decode($_COOKIE[$stateId], true);
-        if (empty($stateData['redirect_uri'])) {
+        if (empty($stateData['path'])) {
             return '';
         }
-        $parsedUri = parse_url($stateData['redirect_uri']);
-        return (isset($parsedUri['path']) ? $parsedUri['path'] : '/') . (!empty($parsedUri['query']) ? '?' . $parsedUri['query'] : '');
+
+        //setcookie не поддерживает символ =
+        $stateData['path'] = implode('=', $stateData['path'] ?? []);
+        //на всякий случай страхуемся от того, что нам подсунули полный URL с доменом
+        $stateData['path'] = parse_url($stateData['path'], PHP_URL_PATH);
+        $stateData['query'] = http_build_query($stateData['query'] ?? []);
+
+        return (!empty($stateData['path']) ? $stateData['path'] : '/') . (!empty($stateData['query']) ? '?' . $stateData['query'] : '');
     }
 
     public function set(string $redirectUri): string
     {
+        $parsedPath = parse_url($redirectUri, PHP_URL_PATH);
+        //setcookie не поддерживает символ =
+        $path = explode('=', $parsedPath);
+
+        $parsedQuery = parse_url($redirectUri, PHP_URL_QUERY);
+
+        $query = [];
+        if (!empty($parsedQuery)) {
+            parse_str($parsedQuery, $query);
+        }
+
         $stateId = $this->makeStateId();
         $stateData = [
-            'redirect_uri' => $redirectUri
+            'path' => $path,
+            'query' => $query,
         ];
-        setcookie($stateId, json_encode($stateData), time() + 3600, '/');
+        $encoded = json_encode($stateData);
+        setcookie($stateId, $encoded, time() + 3600, '/');
         return $stateId;
     }
 
